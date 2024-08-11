@@ -2,7 +2,8 @@ import numpy as np
 import pandas as pd
 from sklearn.decomposition import TruncatedSVD
 from sklearn.metrics.pairwise import cosine_similarity
-from .db_models import fetch_data
+from scipy.sparse import csr_matrix
+from app.models.db_models import fetch_data
 
 def get_interaction_data():
     query = '''
@@ -25,10 +26,14 @@ def train_model():
     product_matrix = svd.components_
 
     user_similarity = cosine_similarity(user_matrix)
-    return pd.DataFrame(user_similarity, index=user_product_matrix.index, columns=user_product_matrix.index)
+    
+    user_similarity_df = pd.DataFrame(user_similarity, index=user_product_matrix.index, columns=user_product_matrix.index)
+    
+    return user_similarity_df, user_product_matrix
 
 def generate_recommendations(user_id, num_recommendations=5):
-    user_similarity_df = train_model()
+    user_similarity_df, user_product_matrix = train_model()
+    
     if user_id not in user_similarity_df.index:
         raise ValueError(f"User ID {user_id} not found in user similarity matrix.")
     
