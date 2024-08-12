@@ -18,12 +18,12 @@ query_users = "SELECT id AS userId, cust_first_name AS userName FROM customer"
 query_products = "SELECT id AS productId, pro_name AS productName FROM product"
 
 query_clicks= """
-SELECT customerId AS userId, productId, SUM(clicks) AS clicks FROM customer_product
-GROUP BY customerId, productId
+SELECT customer_id AS userId, product_id AS productId, SUM(clicks) AS clicks FROM customer_product
+GROUP BY customer_id, product_id
 """
 query_rating = """
-SELECT customerId AS userId, productId,  AVG(rating) AS rating FROM customer_product
-GROUP BY customerId, productId
+SELECT customer_id AS userId, product_id AS productId,  AVG(rating) AS rating FROM customer_product
+GROUP BY customer_id, product_id
 """
 
 # Obtener datos de la base de datos
