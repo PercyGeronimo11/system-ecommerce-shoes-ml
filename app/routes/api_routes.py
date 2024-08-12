@@ -3,21 +3,49 @@ from app import app
 from app.services.recomendation_service import generate_recommendations
 from app.services.customer_service import fetch_customers
 
-
-
 @app.route('/product/recommendations/<int:user_id>', methods=['GET'])
 def get_recommendations(user_id):
     num_recommendations = request.args.get('num', 5, type=int)
     try:
+        # Generar recomendaciones (obtenemos los IDs de los productos)
+        #recommended_products = generate_recommendations(user_id, num_recommendations)
         recommendations = generate_recommendations(user_id, num_recommendations)
-        
-        # Imprimir para depuración
-        print(f"Recommendations for user {user_id}: {recommendations}")
+        # Estructurar las recomendaciones en el formato deseado
+        formatted_recommendations = [
+            {
+                "id": rec["id"],
+                "category": {
+                    "id": rec["cat_id"],
+                    "catName": "Nombre de la categoría",  # Este valor debería obtenerse desde la base de datos
+                    "catDescription": "Descripción de la categoría",  # Este valor debería obtenerse desde la base de datos
+                    "catStatus": bool(rec["pro_status"]),
+                    "catHasTaco": True  # Este valor también debería obtenerse desde la base de datos
+                },
+                "proName": rec["pro_name"],
+                "proDescription": rec["pro_description"],
+                "proUnitPrice": rec["pro_unit_price"],
+                "proUnitCost": rec["pro_unit_cost"],
+                "proSize": rec["pro_size"],
+                "proSizePlatform": rec["pro_size_platform"],
+                "proSizeTaco": rec["pro_size_taco"],
+                "proUrlImage": rec["pro_url_image"],
+                "proColor": rec["pro_color"],
+                "proStock": rec["pro_stock"],
+                "proStatus": bool(rec["pro_status"])
+            }
+            for rec in recommendations
+        ]
 
-        # Asegúrate de que las recomendaciones sean convertibles a JSON
-        recommendations_list = recommendations.tolist() if hasattr(recommendations, 'tolist') else list(recommendations)
-        
-        return jsonify({"user_id": user_id, "recommendations": recommendations_list})
+        # Estructurar la respuesta completa
+        response = {
+            "status": 200,
+            "message": "Lista de productos exitosamente",
+            "data": {
+                "content": formatted_recommendations
+            }
+        }
+        return jsonify(response)
+        #return jsonify({"user_id": user_id, "recommendations": recommendations_list})
     except ValueError as e:
         print(f"ValueError: {e}")  # Imprimir error para depuración
         return jsonify({"error": str(e)}), 400

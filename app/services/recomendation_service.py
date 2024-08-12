@@ -87,8 +87,16 @@ product_matrix = svd.components_
 user_similarity = cosine_similarity(user_matrix)
 user_similarity_df = pd.DataFrame(user_similarity, index=user_product_matrix.index, columns=user_product_matrix.index)
 
+def get_product_details(product_ids):
+    if not product_ids:
+        return []
+    
+    format_strings = ','.join(['%s'] * len(product_ids))
+    query = f"SELECT * FROM product WHERE id IN ({format_strings})"
+    return fetch_data(query, tuple(product_ids))
+
 # Función para generar recomendaciones
-def generate_recommendations(user_id, num_recommendations=5):
+def generate_recommendations(user_id, num_recommendations=9):
     if user_id not in user_similarity_df.index:
         raise ValueError(f"User ID {user_id} not found in user similarity matrix.")
 
@@ -105,6 +113,12 @@ def generate_recommendations(user_id, num_recommendations=5):
     recommendations = weighted_interactions.sort_values(ascending=False)
 
     # Limitar el número de recomendaciones
-    top_recommendations = recommendations.head(num_recommendations).index.tolist()
+    #top_recommendations = recommendations.head(num_recommendations).index.tolist()
+    
+    # Limitar el número de recomendaciones
+    top_recommendations_ids = recommendations.head(num_recommendations).index.tolist()
 
-    return top_recommendations
+  # Obtener los detalles completos de los productos recomendados
+    top_recommendations_details = get_product_details(top_recommendations_ids)
+
+    return top_recommendations_details
