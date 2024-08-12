@@ -3,7 +3,9 @@ from app import app
 from app.services.recomendation_service import generate_recommendations
 from app.services.customer_service import fetch_customers
 
-@app.route('/recommendations/<int:user_id>', methods=['GET'])
+
+
+@app.route('/product/recommendations/<int:user_id>', methods=['GET'])
 def get_recommendations(user_id):
     num_recommendations = request.args.get('num', 5, type=int)
     try:
@@ -22,6 +24,7 @@ def get_recommendations(user_id):
     except Exception as e:
         print(f"Unexpected error: {e}")  # Imprimir error inesperado
         return jsonify({"error": "An unexpected error occurred."}), 500
+
 
 @app.route('/customers', methods=['GET'])
 def list_customers():
