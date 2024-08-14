@@ -2,6 +2,8 @@ from flask import jsonify, request
 from app import app
 from app.services.recomendation_service import generate_recommendations
 from app.services.customer_service import fetch_customers
+from app.services.demand_prediction import predict_next_month_sales
+
 
 @app.route('/product/recommendations/<int:user_id>', methods=['GET'])
 def get_recommendations(user_id):
@@ -63,3 +65,26 @@ def list_customers():
     except Exception as e:
         print(f"Error: {e}")  # Depuración
         return jsonify({"error": str(e)}), 500
+
+@app.route('/product/demanding', methods=['POST'])
+def get_product_demand():
+    try:
+        # Obtener los datos del JSON de la solicitud
+        data = request.get_json()
+
+        # Validar los datos
+        product_id = data.get('product_id')
+        year = data.get('year')
+        month = data.get('month')
+
+        if product_id is None or year is None or month is None:
+            return jsonify({'error': 'Faltan parámetros en la solicitud'}), 400
+
+        # Llamar a la función de predicción
+        prediction = predict_next_month_sales(product_id, year, month)
+
+        # Devolver la predicción como JSON
+        return jsonify({'product_id': product_id, 'prediction': prediction})
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
