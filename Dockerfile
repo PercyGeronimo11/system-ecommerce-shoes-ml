@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 5000
 
 # Comando para ejecutar la aplicación
-CMD ["python", "app.py"]
+CMD ["python", "run.py"]
