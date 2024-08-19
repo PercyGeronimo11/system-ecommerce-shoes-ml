@@ -18,11 +18,11 @@ query_users = "SELECT id AS userId, cust_first_name AS userName FROM customer"
 query_products = "SELECT id AS productId, pro_name AS productName FROM product"
 
 query_clicks= """
-SELECT customer_id AS userId, product_id AS productId, SUM(clicks) AS clicks FROM customer_product
+SELECT customer_id AS userId, product_id AS productId, SUM(clicks) AS clicks FROM product_customer
 GROUP BY customer_id, product_id
 """
 query_rating = """
-SELECT customer_id AS userId, product_id AS productId,  AVG(rating) AS rating FROM customer_product
+SELECT customer_id AS userId, product_id AS productId,  AVG(rating) AS rating FROM product_customer
 GROUP BY customer_id, product_id
 """
 
