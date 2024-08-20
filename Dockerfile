@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 5000
 
 # Comando para ejecutar la aplicación
-CMD ["python", "run.py"]
+CMD ["python", "run.py", "--port", "5200", "--host", "0.0.0.0"]
